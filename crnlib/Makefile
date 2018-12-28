@@ -99,5 +99,13 @@ corpus_test.o: ../crunch/corpus_test.cpp
 crunch: $(LIBCRUNCH) crunch.o corpus_gen.o corpus_test.o
 	g++ crunch.o corpus_gen.o corpus_test.o -o crunch $(LIBCRUNCH) $(LINKER_OPTIONS)
 
+build/lib: $(LIBCRUNCH)
+	rsync -rupE $(LIBCRUNCH) build/lib/$(LIBCRUNCH)
+	
+build/include:
+	rsync -rupE ../inc build/include/
+
 clean:
 	rm -rf $(LIBCRUNCH) crunch *.o 
+
+.PHONY: build/lib build/include
