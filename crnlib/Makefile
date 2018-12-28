@@ -87,6 +87,12 @@ all: crunch
 $(LIBCRUNCH): $(OBJECTS)
 	ar rcs $(LIBCRUNCH) $(OBJECTS)
 
+build/include:
+	rsync -rupE ../inc build/include/
+	
+build/lib: $(LIBCRUNCH)
+	rsync -rupE $(LIBCRUNCH) build/lib/$(LIBCRUNCH)
+
 crunch.o: ../crunch/crunch.cpp
 	g++ $< -o $@ -c -I../inc -I../crnlib $(COMPILE_OPTIONS)
 
@@ -96,16 +102,10 @@ corpus_gen.o: ../crunch/corpus_gen.cpp
 corpus_test.o: ../crunch/corpus_test.cpp
 	g++ $< -o $@ -c -I../inc -I../crnlib $(COMPILE_OPTIONS)
 
-crunch: $(LIBCRUNCH) crunch.o corpus_gen.o corpus_test.o
+crunch: $(LIBCRUNCH) build/lib build/include crunch.o corpus_gen.o corpus_test.o
 	g++ crunch.o corpus_gen.o corpus_test.o -o crunch $(LIBCRUNCH) $(LINKER_OPTIONS)
 
-build/lib: $(LIBCRUNCH)
-	rsync -rupE $(LIBCRUNCH) build/lib/$(LIBCRUNCH)
-	
-build/include:
-	rsync -rupE ../inc build/include/
-
 clean:
-	rm -rf $(LIBCRUNCH) crunch *.o 
+	rm -rf $(LIBCRUNCH) crunch *.o build/include build/lib
 
 .PHONY: build/lib build/include
