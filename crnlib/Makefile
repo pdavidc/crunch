@@ -1,7 +1,8 @@
 COMPILE_OPTIONS = -O3 -fomit-frame-pointer -ffast-math -fno-math-errno -g -fPIC -fno-strict-aliasing -Wall -Wno-unused-value -Wno-unused -march=core2
 LINKER_OPTIONS = -lpthread -g
 
-LIBCRUNCH = libcrunch.a
+LIBCRUNCH = lib/libcrunch.a
+INCLUDE = include/crunch/
 
 OBJECTS = \
   crn_arealist.o \
@@ -85,7 +86,11 @@ all: crunch
 	g++ $< -o $@ -c $(COMPILE_OPTIONS)
 
 $(LIBCRUNCH): $(OBJECTS)
+	mkdir -p ${LIBCRUNCH/*}
 	ar rcs $(LIBCRUNCH) $(OBJECTS)
+
+$(INCLUDE):
+	rsync -rupE ../inc/ $(INCLUDE)
 
 crunch.o: ../crunch/crunch.cpp
 	g++ $< -o $@ -c -I../inc -I../crnlib $(COMPILE_OPTIONS)
@@ -96,8 +101,10 @@ corpus_gen.o: ../crunch/corpus_gen.cpp
 corpus_test.o: ../crunch/corpus_test.cpp
 	g++ $< -o $@ -c -I../inc -I../crnlib $(COMPILE_OPTIONS)
 
-crunch: $(LIBCRUNCH) crunch.o corpus_gen.o corpus_test.o
+crunch: $(LIBCRUNCH) $(INCLUDE) crunch.o corpus_gen.o corpus_test.o
 	g++ crunch.o corpus_gen.o corpus_test.o -o crunch $(LIBCRUNCH) $(LINKER_OPTIONS)
 
 clean:
-	rm -rf $(LIBCRUNCH) crunch *.o 
+	rm -rf $(LIBCRUNCH) $(INCLUDE) crunch *.o 
+
+.PHONY: $(INCLUDE)
