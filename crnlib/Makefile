@@ -86,7 +86,7 @@ all: crunch
 	g++ $< -o $@ -c $(COMPILE_OPTIONS)
 
 $(LIBCRUNCH): $(OBJECTS)
-	mkdir -p ${LIBCRUNCH/*}
+	mkdir -p $(LIBCRUNCH/*)
 	ar rcs $(LIBCRUNCH) $(OBJECTS)
 
 $(INCLUDE):
