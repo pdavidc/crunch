@@ -90,6 +90,7 @@ $(LIBCRUNCH): $(OBJECTS)
 	ar rcs $(LIBCRUNCH) $(OBJECTS)
 
 $(INCLUDE):
+	mkdir -p $(INCLUDE)
 	rsync -rupE ../inc/ $(INCLUDE)
 
 crunch.o: ../crunch/crunch.cpp
